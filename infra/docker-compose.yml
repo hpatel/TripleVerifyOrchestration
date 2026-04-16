@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  gateway:
+    build: ../gateway
+    ports: ["8000:8000"]
+
+  orchestrator:
+    build: ../orchestrator
+
+  planner:
+    build: ../planner_service
+
+  retriever:
+    build: ../retriever_service
+
+  memory:
+    build: ../memory_service
+    depends_on: [redis]
+
+  rag:
+    build: ../rag_service
+
+  redis:
+    image: redis:7

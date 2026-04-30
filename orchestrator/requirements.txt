@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+httpx
+langgraph
+openai>=1.0.0
+anthropic
+google-generativeai
+pydantic

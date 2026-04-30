@@ -1,13 +1,31 @@
 from langgraph.graph import StateGraph, END
-from .services import call
+from typing import TypedDict, Any, Annotated
+from services import call
 from common.llm import call_llm
-from .config import CONFIG
+from config import CONFIG
+from operator import add
 
 PLANNER = "http://planner:8001/plan"
-RETRIEVER = "http://retriever:8002/retrieve"
+RETRIEVER = "http://retriever:8000/retrieve"
 MEMORY = "http://memory:8003/get"
 CRITIC = "http://critic:8005/critic"
 SAFETY = "http://safety:8006/safety"
+
+MAX_CRITIC_LOOPS = 3
+MAX_SAFETY_LOOPS = 3
+
+class StateSchema(TypedDict):
+    query: str
+    plan: Any
+    context: Any
+    memories: Any
+    answer: str
+    critic_score: float
+    critic_feedback: str
+    critic_loops: int
+    safety_score: float
+    safety_feedback: str
+    safety_loops: int
 
 async def planner_node(state):
     res = await call(PLANNER, state)
@@ -22,7 +40,7 @@ async def memory_node(state):
     return {"memories": res["memories"]}
 
 from common.llm import call_llm
-from .config import CONFIG
+from config import CONFIG
 
 async def solution_node(state):
     answer = f"""
@@ -82,7 +100,7 @@ async def safety_node(state):
 
 
 def build():
-    g = StateGraph(dict)
+    g = StateGraph(StateSchema)
 
     g.add_node("planner", planner_node)
     g.add_node("retriever", retriever_node)
@@ -93,10 +111,9 @@ def build():
 
     g.set_entry_point("planner")
 
+    # Sequential flow: planner -> retriever -> memory -> solution
     g.add_edge("planner", "retriever")
-    g.add_edge("planner", "memory")
-
-    g.add_edge("retriever", "solution")
+    g.add_edge("retriever", "memory")
     g.add_edge("memory", "solution")
 
     g.add_edge("solution", "critic")

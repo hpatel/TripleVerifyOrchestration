@@ -310,3 +310,316 @@ With safety acting as a **hard constraint**, not a suggestion.
 # 📜 License
 
 MIT License
+
+# 🧠 Distributed Safety-First Multi-Agent AI System
+
+A production-ready, distributed AI system built with **LangGraph**, **microservices**, and **multi-LLM orchestration**.
+This system uses **Solution, Critic, and Safety agents** to iteratively refine outputs with a strong emphasis on **accuracy, safety, and continuous improvement**.
+
+---
+
+# 🚀 Features
+
+## 🧠 Multi-Agent Architecture
+
+* **Solution Agent** → Generates responses
+* **Critic Agent** → Evaluates and suggests improvements
+* **Safety Agent** → Enforces safety, correctness, and policy compliance
+
+---
+
+## 🔁 Iterative Refinement Loops
+
+* Critic ↔ Solution loop (max configurable iterations)
+* Safety ↔ Solution loop (final authority)
+* Feedback-driven improvements
+
+---
+
+## ⚡ Distributed Microservices
+
+Each agent runs as an independent service:
+
+* Scalable
+* Fault-isolated
+* Replaceable
+
+---
+
+## 🔍 Retrieval-Augmented Generation (RAG)
+
+* Vector search via **FAISS**
+* Real-time updates via Redis streams
+* Persistent + shardable index
+
+---
+
+## 🧠 Memory System
+
+* Short-term memory via **Redis**
+* Long-term semantic memory via vector DB
+
+---
+
+## 🔄 Real-Time Learning
+
+* Agents push new knowledge into RAG pipeline
+* Streaming ingestion worker updates index live
+
+---
+
+## 🤖 Multi-LLM Support
+
+Configurable agents using:
+
+* **OpenAI**
+* **Google** (Gemini)
+* **Anthropic** (Claude)
+
+---
+
+# 🏗️ Architecture Overview
+
+```text
+Client
+  ↓
+API Gateway
+  ↓
+Orchestrator (LangGraph)
+  ↓
+ ┌─────────────── Parallel ───────────────┐
+ ↓                ↓                      ↓
+Retriever       Memory                Planner
+ ↓                ↓                      ↓
+        └────── Merge ───────┘
+                 ↓
+            Solution Agent
+                 ↓
+            Critic Agent
+                 ↓
+            Safety Agent
+                 ↓
+              Output
+```
+
+---
+
+# 📁 Project Structure
+
+```bash
+ai-agent-system/
+├── gateway/
+├── orchestrator/
+├── planner_service/
+├── retriever_service/
+├── memory_service/
+├── tool_service/
+├── critic_service/
+├── safety_service/
+├── rag_service/
+├── common/
+├── infra/
+├── scripts/
+└── .env
+```
+
+---
+
+# ⚙️ Configuration
+
+All models are configurable via environment variables:
+
+```env
+# Solution Agent
+SOLUTION_PROVIDER=openai
+SOLUTION_MODEL=gpt-4o-mini
+
+# Critic Agent
+CRITIC_PROVIDER=gemini
+CRITIC_MODEL=gemini-pro
+
+# Safety Agent
+SAFETY_PROVIDER=anthropic
+SAFETY_MODEL=claude-3-haiku
+```
+
+---
+
+# 🐳 Running Locally (Docker)
+
+```bash
+docker-compose -f infra/docker-compose.yml up --build
+```
+
+---
+
+## 📡 API Usage
+
+### Endpoint
+
+```
+POST /query
+```
+
+### Request
+
+```json
+{
+  "query": "Explain how neural networks work"
+}
+```
+
+### Response
+
+```json
+{
+  "answer": "...",
+  "critic_score": 0.92,
+  "safety_score": 0.96
+}
+```
+
+---
+
+# 🔁 Agent Workflow
+
+## 1. Planning
+
+Breaks down the problem into steps
+
+## 2. Parallel Context Gathering
+
+* Retrieval (RAG)
+* Memory lookup
+
+## 3. Solution Generation
+
+Combines:
+
+* Query
+* Plan
+* Context
+* Memory
+* Feedback
+
+## 4. Critic Loop
+
+* Evaluates correctness
+* Suggests improvements
+* Loops until threshold or max iterations
+
+## 5. Safety Loop
+
+* Detects hallucinations
+* Flags harmful or unsafe content
+* Overrides critic if needed
+
+---
+
+# 🧠 Memory + RAG Flow
+
+```text
+Query
+ ↓
+Vector Search (RAG)
+ ↓
+Inject Context
+ ↓
+Generate Answer
+ ↓
+Evaluate (Critic/Safety)
+ ↓
+Store High-Quality Knowledge
+ ↓
+Stream to RAG Index
+```
+
+---
+
+# ⚡ Real-Time RAG Updates
+
+* Uses Redis Streams
+* Async ingestion worker
+* Immediate availability for queries
+
+---
+
+# ☸️ Kubernetes Deployment (Optional)
+
+Each service can be deployed as:
+
+* Deployment
+* Service
+* Horizontal Pod Autoscaler
+
+Supports:
+
+* Independent scaling
+* Fault tolerance
+* Load balancing
+
+---
+
+# 🛡️ Safety Guarantees
+
+Safety Agent checks:
+
+* Hallucinations
+* Harmful content
+* Policy violations
+
+Safety has **final override authority**
+
+---
+
+# 📊 Scoring System
+
+| Agent    | Purpose  | Output           |
+| -------- | -------- | ---------------- |
+| Solution | Generate | Answer           |
+| Critic   | Improve  | Score + Feedback |
+| Safety   | Validate | Score + Feedback |
+
+---
+
+# 🚀 Roadmap / Future Improvements
+
+* Structured output enforcement (Pydantic)
+* Observability (tracing, metrics)
+* Cost tracking per agent
+* Benchmark-driven optimization
+* Multi-agent voting systems
+* Hybrid retrieval (vector + keyword)
+* Managed vector DB (Pinecone / Weaviate)
+
+---
+
+# ⚠️ Important Notes
+
+* Tool execution should be sandboxed in production
+* FAISS is local; consider managed DB for scale
+* Add retries + circuit breakers for resilience
+
+---
+
+# 🧠 Philosophy
+
+This system is designed around:
+
+> **Accuracy > Safety > Performance > Conciseness**
+
+With safety acting as a **hard constraint**, not a suggestion.
+
+---
+
+# 👨‍💻 Contributing
+
+1. Fork repo
+2. Create feature branch
+3. Submit PR
+
+---
+
+# 📜 License
+
+MIT License
